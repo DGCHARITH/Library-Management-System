@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <!-- <a class="navbar-brand" href="#">MCH NoteApp</a> -->
-            <a class="navbar-brand" href="#">Library</a>
+            <a class="navbar-brand" href="#">Library Management System</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -29,10 +29,10 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" id="searchText" type="search" placeholder="Search"
-                        aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+                <form class="d-flex" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                    <input class="form-control me-2"name="searchtext" id="searchText" type="search" placeholder="Search"
+                        aria-label="Search" >
+                    <button class="btn btn-outline-success" type="submit" >Search</button>
                 </form>
             </div>
         </div>
@@ -53,85 +53,17 @@
     <!-- ############################################################################################################### -->
     <!-- [ class = Container] - inside this we will write everything (*html) that are needed for this project -->
     <!-- class = Container- [opening] -->
-    <div class="container">
-        <h1 style="text-align: center;">LIBRARY MANAGEMENT SYSTEM</h1>
-        <!-- <br> -->
-        <hr>
-        <form id="libraryForm">
-            <div class="form-group row">
-                <label for="bookName" class="col-sm-2 col-form-label">NAME</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="bookName" placeholder="Book Name">
-                </div>
-            </div>
-            <br>
-            <div class="form-group row">
-                <label for="Aauthor" class="col-sm-2 col-form-label">AUTHOR</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="author" placeholder="Author Name">
-                </div>
-            </div>
-            <br>
-            <fieldset class="form-group row">
-
-                <legend class="col-form-label col-sm-2 float-sm-left pt-0">TYPE</legend>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" id="science" value="science" checked>
-                        <label class="form-check-label" for="science">
-                            SCEINCE
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" id="ethics" value="ethics">
-                        <label class="form-check-label" for="ethics">
-                            ETHICS
-                        </label>
-                    </div>
-
-                    <!-- disabled -->
-                    <div class="form-check disabled">
-                        <input class="form-check-input" type="radio" name="type" id="history" value="history">
-                        <label class="form-check-label" for="history">
-                            HISTORICAL
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" id="programming" value="programming">
-                        <label class="form-check-label" for="programming">
-                            COMPUTER PROGRAMMING
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" id="maths" value="maths">
-                        <label class="form-check-label" for="maths">
-                            MATHEMATICS
-                        </label>
-                    </div>
-
-                </div>
-
-            </fieldset>
-
-            <br>
-
-            <!-- style="text-align: center; border: 2PX SOLID RED; margin-left: 20px;" -->
-            <div class="form-group row">
-                <div class="col-sm-10">
-                    <button type="submit" class="btn btn-primary">ADD BOOK</button>
-                </div>
-            </div>
-        </form>
-        <br>
-        <br>
-
+   
         <!-- ############################################################################################### -->
         <div id="table">
             <h1 style="text-align: center;">YOUR BOOKS </h1>
             <hr>
+            <?php
+                if(isset($_POST["searchtext"]))
+                {
+                    echo "Showing results for '".$_POST["searchtext"]."'";
+                }
+            ?>
             <table class="table">
                 <thead>
                     <tr>
@@ -155,13 +87,21 @@
                             if ($conn->connect_error) {
                             die("Connection failed: " . $conn->connect_error);
                             }
-
-                            $sql = "SELECT * FROM books";
+                            if(isset($_POST["searchtext"])){
+                                $lk='%'.$_POST["searchtext"].'%';
+                            }
+                            else{
+                                $lk="%";
+                            }
+                            $sql = "SELECT * FROM books WHERE Title LIKE '$lk' ";
+                            $count=0;
                             $result = $conn->query($sql);
 
                             if ($result->num_rows > 0) {
                             // output data of each row
-                            while($row = $result->fetch_assoc()) {?>
+                            while($row = $result->fetch_assoc()) {
+                                    $count=$count+1;  
+                                ?>
                                 <tr>
                                 <td><img src="Books/<?=$row["Title"]?>.jpg" alt="<?php $row["Title"]?>" width="40" height="60"> <?php echo $row["Title"];?></td>
                                 <td><?php echo $row["Author"];?></td>
@@ -172,14 +112,14 @@
                                 
                             }
                             } else {
-                            echo "0 results";
+                            echo "<br> No Match Found";
                             }
                             $conn->close();
                         ?>
                 </tbody>
             </table>
         </div>
-
+        <?php echo "Total results ".$count?>
         <!-- ############################################################################################### -->
     </div>
 
