@@ -12,6 +12,3 @@ A library management system is software / webapp  that is designed to manage all
 
 ![ JavaScript ](https://img.shields.io/badge/JavaScript-JavaScript%20adds%20behavior%20to%20web%20pages-yellow)
 
-
-## Project Timeline
-21st July 2021
